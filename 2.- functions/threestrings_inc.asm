@@ -1,4 +1,4 @@
-;threestrings.asm
+;threestrings_inc.asm
 ;prints three strings, using functions for repeated tasks
 ;author: Erick
 ;date: 2017/03/07
