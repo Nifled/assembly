@@ -146,6 +146,32 @@ atoi:
     pop ebx 	                                     ; get ebx
     ret
 
+; Fahrenheit to Celsius conversion
+ftoc:
+    sub eax, 32 ;subtract 32
+    imul eax, 5 ;multiply 5
+    push edx ;save register in stack for use
+    mov edx, 0
+    push ebx ;save register in stack for use
+    mov ebx, 9
+    div ebx ;divide eax by given register (ebx)
+    pop ebx ;get rid of register from stack
+    pop edx ;get rid of register from stack
+    ret
+
+; Celsius to Fahrenheit conversion
+ctof:
+	imul eax, 9 
+	push edx
+	mov edx,0
+	push ebx
+	mov ebx, 5
+	div ebx
+	pop ebx
+	pop edx
+	add eax, 32
+	ret
+
 quit:
     mov eax, sys_exit                                ;sys_exit
     int 0x80                                         ;kernel call
