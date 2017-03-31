@@ -1,5 +1,5 @@
-;sum_args.asm
-;prints total sum of numbers in args.
+;avg_args.asm
+;prints average of numbers in args.
 ;author: Erick
 ;date: 2017/03/29
 

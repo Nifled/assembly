@@ -3,12 +3,12 @@
 ;author: Erick
 ;date: 2017/03/07
 
-%include 'functions.asm'
+%include '../2.- functions/functions.asm'
 
 section .data
-    msg1 DB "Hello world!",0x0                       ;1st message
-    msg2 DB "Assembly for dummies",0x0               ;2nd message
-    msg3 DB "Erick",0x0                              ;3rd message
+    msg1 DB "Hello world!",0xA,0x0                   ;1st message
+    msg2 DB "Assembly with functions.",0xA,0x0       ;2nd message
+    msg3 DB "Erick",0xA,0x0                          ;3rd message
 
 section .text
     GLOBAL _start

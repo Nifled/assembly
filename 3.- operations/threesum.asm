@@ -24,6 +24,9 @@ _start:
     mov EBX, [num1]                                  ;load num2 to EBX
     add EAX, EBX                                     ;adds EAX + EBX and loads to EAX
 
+    mov EBX, [num2]
+	add EAX, EBX
+
     call iprintLF                                    ;prints result
 
     jmp quit                                         ;exit
