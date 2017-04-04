@@ -15,7 +15,7 @@ _start:
     pop ecx                                          ;get # of args
 
     cmp ecx,2                                        ;compare #args to 2 to quit if less
-    jl quit                                          ;jump if less
+    jl end                                           ;jump if less
 
     pop eax                                          ;remove first arg (program name)
     dec ecx                                          ;decrement # of args by 1
@@ -38,3 +38,6 @@ _start:
     print:
         mov eax, array                               ;point eax to array
         call sprintLF                                ;print array
+
+end:
+    jmp quit
