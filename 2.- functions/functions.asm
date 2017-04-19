@@ -172,6 +172,42 @@ ctof:
 	add eax, 32
 	ret
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Function to print string from array ;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+stringcopy:
+	push ecx										 ;save and clear registers
+	push ebx
+	mov ebx, 0
+	mov ecx, 0
+	mov ebx, eax
+
+	.sigcar:
+		mov bl, byte[eax]
+		mov byte[esi+ecx], bl						 ;move one character
+
+		cmp byte[eax],0								 ;check if byte is 0
+		jz .finalized 								 ;jump if zero to finalized
+
+		inc eax										 ;next letter
+		inc ecx 									 ;avoid rewriting a char in index
+		jmp .sigcar
+
+	.finalized:
+		pop ebx 									 ;restore values
+		pop ecx
+		ret
+
+;==========================
+; Reads input.
+; Accepts buffer in ecx, and buffer len in edx.
+;==========================
+readText:
+    mov eax, sys_read
+    mov ebx, stdin
+    int 0x80
+    return
+
 quit:
     mov eax, sys_exit                                ;sys_exit
     int 0x80                                         ;kernel call

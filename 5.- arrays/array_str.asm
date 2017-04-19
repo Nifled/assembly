@@ -1,4 +1,4 @@
-; array_str.asm
+;array_str.asm	
 ;author: Erick
 ;date: 2017/04/05
 
@@ -10,7 +10,7 @@ segment .bss
 section .text
 	global _start
 
-_start:
+_start:	
 	pop ecx 										 ;get # of args
 	cmp ecx, 2										 ;compare to 2
 	jl end											 ;if less than 2, end
@@ -33,33 +33,6 @@ _start:
 
 	mov ecx, edx 									 ;restore original # of args
 	mov esi, array
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Function to print string from array ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-stringcopy:
-	push ecx										 ;save and clear registers
-	push ebx
-	mov ebx, 0
-	mov ecx, 0
-	mov ebx, eax
-
-	.sigcar:
-		mov bl, byte[eax]
-		mov byte[esi+ecx], bl						 ;move one character
-
-		cmp byte[eax],0								 ;check if byte is 0
-		jz .finalized 								 ;jump if zero to finalized
-
-		inc eax										 ;next letter
-		inc ecx 									 ;avoid rewriting a char in index
-		jmp .sigcar
-
-	.finalized:
-		pop ebx 									 ;restore values
-		pop ecx
-		ret
 
 print:
 	mov eax, esi
