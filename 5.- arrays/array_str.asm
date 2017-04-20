@@ -1,4 +1,4 @@
-;array_str.asm	
+;array_str.asm
 ;author: Erick
 ;date: 2017/04/05
 
@@ -10,7 +10,7 @@ segment .bss
 section .text
 	global _start
 
-_start:	
+_start:
 	pop ecx 										 ;get # of args
 	cmp ecx, 2										 ;compare to 2
 	jl end											 ;if less than 2, end

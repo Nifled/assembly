@@ -172,9 +172,11 @@ ctof:
 	add eax, 32
 	ret
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; Function to print string from array ;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; =========================================
+;Function to print string from array
+;Recieves string to copy in eax and to write in esi
+;Copies string from eax to esi
+; ==========================================
 stringcopy:
 	push ecx										 ;save and clear registers
 	push ebx
@@ -206,7 +208,7 @@ readText:
     mov eax, sys_read
     mov ebx, stdin
     int 0x80
-    return
+    ret
 
 quit:
     mov eax, sys_exit                                ;sys_exit
