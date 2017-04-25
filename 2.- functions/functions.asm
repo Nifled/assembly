@@ -6,6 +6,9 @@
 sys_exit EQU 1
 sys_read EQU 3
 sys_write EQU 4
+sys_open equ 5
+sys_close equ 6
+O_RDONLY equ 0
 stdin EQU 0
 stdout EQU 1
 stderr EQU 3
