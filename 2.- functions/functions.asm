@@ -188,6 +188,9 @@ stringcopy:
 	mov ebx, eax
 
 	.sigcar:
+        cmp byte[eax], 0xA
+        je .finalized
+
 		mov bl, byte[eax]
 		mov byte[esi+ecx], bl						 ;move one character
 

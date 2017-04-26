@@ -1,7 +1,7 @@
 ;read_file.asm
 ;read from a txt file and outputs
 ;author: Erick
-;date: 2017/04/25
+;date: 2017/04/25   
 
 %include '../2.- functions/functions.asm'
 
