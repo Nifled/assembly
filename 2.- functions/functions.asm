@@ -9,6 +9,7 @@ sys_write EQU 4
 sys_open equ 5
 sys_close equ 6
 O_RDONLY equ 0
+O_RDWR equ 1
 stdin EQU 0
 stdout EQU 1
 stderr EQU 3
@@ -200,6 +201,39 @@ stringcopy:
 		inc eax										 ;next letter
 		inc ecx 									 ;avoid rewriting a char in index
 		jmp .sigcar
+
+	.finalized:
+		pop ebx 									 ;restore values
+		pop ecx
+		ret
+
+;Same as sringcopy functino but uses condition to compare agains '0xA' or return key.
+copystring:
+	push ecx										 ;save and clear registers
+	push ebx
+	mov ebx, 0
+	mov ecx, 0
+	mov ebx, eax
+
+	.sigcar:
+        mov bl, byte[eax]
+
+        cmp bl, 0xA                                  ;if there's a return character, continue to next iteration
+        je .continue
+		
+		mov byte[esi+ecx], bl						 ;move one character
+
+		cmp byte[eax],0								 ;check if byte is 0
+		jz .finalized 								 ;jump if zero to finalized
+
+		inc eax										 ;next letter
+		inc ecx 									 ;avoid rewriting a char in index
+		jmp .sigcar
+
+        .continue:
+            inc eax
+            inc ecx
+            jmp .sigcar
 
 	.finalized:
 		pop ebx 									 ;restore values
