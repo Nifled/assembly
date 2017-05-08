@@ -36,7 +36,7 @@ _start:
 
 print:
 	mov eax, esi
-	call iprintLF									 ;prints int
+	call sprintLF									 ;prints int
 	add esi, 10
 
 	dec ecx
