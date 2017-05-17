@@ -35,7 +35,7 @@ section .text
 
 
 _start:
-    mov esi, array 									 ;save array direction to esi
+    mov esi, array                                   ;save array direction to esi
 
     pop ecx                                          ;# of args
     cmp ecx, 2                                       ;check that there's at least 1 arg
@@ -94,7 +94,7 @@ _start:
         ;je printFile                                     ;jump if equal
 
         cmp eax,3                                        ;compare option to 3 (print students)
-        ;je readFile                                      ;jump if equal
+        je print_student_grades                                      ;jump if equal
 
         cmp eax,4                                        ;compare option to 4 (save file)
         ;je printFile                                     ;jump if equal
@@ -140,7 +140,7 @@ _start:
 
     ;====================== Capture Grades ===============================
     capture_grades:
-        mov esi. array
+        mov esi, array
 
 
         jmp menu_start
@@ -149,12 +149,44 @@ _start:
 
     jmp end
 
+    ;====================== Print students and grades =====================
+
+    print_student_grades:
+
+    mov ECX, [students_saved]
+    mov EDX, ECX
+
+    mov ESI, array
+    mov EDI, array_grades
+
+        .cycle:
+            mov EAX, ESI
+            call sprint
+
+            add ESI, 30
+
+            ;mov EAX, 0x20
+            ;call sprint
+
+            ;mov EAX, EDI
+            ;call iprintLF
+
+            ;add EDI, 30
+
+            dec ECX
+            cmp ECX, 0
+
+            jne .cycle
+
+            mov [students_saved], EDX
+
+            jmp menu_start
 
 
 string_copy_count:
-	mov ebx, 0
-	mov ecx, 0
-	mov ebx, eax
+    mov ebx, 0
+    mov ecx, 0
+    mov ebx, eax
     pop edx
     
     .next_char:
@@ -164,23 +196,23 @@ string_copy_count:
         cmp bl, 0 ;if there's still something left
         jz .done
 
-        cmp bl, 0x0 ;if its end of word
+        cmp bl, 0xA ;if its end of line
         je .end_word
 
-        mov byte[esi+ecx], bl	; moves a char to current index
+        mov byte[esi+ecx], bl   ; moves a char to current index
 
-        inc eax			    	; next letter
-        inc ecx			    	; so it doesn't rewrite a char
+        inc eax                 ; next letter
+        inc ecx                 ; so it doesn't rewrite a char
         jmp .next_char
 
     .end_word:
         add esi, 30
 
-        inc eax				; next letter
-        inc ecx				; so it doesn't rewrite a char
+        inc eax             ; next letter
+        inc ecx             ; so it doesn't rewrite a char
         jmp .next_char
         
-    .done:				;restore values
+    .done:              ;restore values
         push edx
         ret
 
