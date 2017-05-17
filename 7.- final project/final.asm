@@ -7,7 +7,7 @@
 
 segment .data
     msg_file_not_found db "File not found...",0x0
-    menu DB "| 1. Add Student | 2. Capture Grades | 3. Print Students | 4. Save File | 0. Quit |",0xA,0x0
+    menu DB "| 1. Add Student | 2. Capture Grades | 3. Print Students | 4. Save File | 0. Quit |",0xA, "Option>>>>>>>",0x0
 
     menu_1 DB "Students name?",0xA,0x0
     menu_2 DB "Waiting for number input...",0xA,0x0
@@ -15,9 +15,10 @@ segment .data
     menu_4 DB "File Saved!",0xA,0x0
 
     msg_name DB "Students name: ",0x0
+    msg_grade DB "Students grade: ",0x0
 
 segment .bss
-    students_saved resb 4
+    students_saved resb 4 ;to keep track of 
 
     array resb 3000
     array_grades resb 3000
@@ -27,6 +28,9 @@ segment .bss
     option_buffer resb 3
     option_buffer_len equ $-option_buffer
 
+    grade_buffer resb 3
+    grade_buffer_len equ $-grade_buffer
+
     new_name_buffer resb 30
     len_name equ $-new_name_buffer
 
@@ -35,7 +39,7 @@ section .text
 
 
 _start:
-    mov esi, array 									 ;save array direction to esi
+    mov esi, array                                   ;save array direction to esi
 
     pop ecx                                          ;# of args
     cmp ecx, 2                                       ;check that there's at least 1 arg
@@ -91,10 +95,10 @@ _start:
         je add_student                                      ;jump if equal
 
         cmp eax,2                                        ;compare option to 2 (capture grades)
-        ;je printFile                                     ;jump if equal
+        je capture_grades                                     ;jump if equal
 
         cmp eax,3                                        ;compare option to 3 (print students)
-        ;je readFile                                      ;jump if equal
+        je print_student_grades                                      ;jump if equal
 
         cmp eax,4                                        ;compare option to 4 (save file)
         ;je printFile                                     ;jump if equal
@@ -140,7 +144,42 @@ _start:
 
     ;====================== Capture Grades ===============================
     capture_grades:
-        mov esi. array
+        mov ecx, [students_saved] ;# of studens
+
+        mov esi, array ;student names
+        mov edx, array_grades ;student grades
+
+        cycle:
+            mov eax, esi
+            call sprintLF ;prints student name
+
+            mov eax, msg_grade
+            call sprint ;prints msg asking for grade
+
+            push ecx ;push to save registers and use later
+            push edx ; =
+
+            mov ecx, grade_buffer
+            mov edx, grade_buffer_len ;gets registers ready for input
+            call readText ;reads input
+            mov eax, grade_buffer ;moves input to eax
+            call atoi ;converts grade input to int
+
+            pop edx ;recover array_grades
+            mov [edx], eax ;mov grade to array_grades
+            add esi, 30 ;for student names
+            add edx, 4 ;for grades
+
+            ;clean up buffer
+            mov edi, grade_buffer
+            mov ecx, 30
+            xor eax, eax
+            rep stosb
+
+            pop ecx ;recover # of students
+            dec ecx ;decrement # of students
+            cmp ecx, 0
+            jg cycle
 
 
         jmp menu_start
@@ -149,12 +188,44 @@ _start:
 
     jmp end
 
+    ;====================== Print students and grades =====================
+
+    print_student_grades:
+
+    mov ECX, [students_saved]
+    mov EDX, ECX
+
+    mov ESI, array
+    mov EDI, array_grades
+
+        .cycle:
+            mov EAX, ESI
+            call sprint
+
+            add ESI, 30
+
+            ;mov EAX, 0x20
+            ;call sprint
+
+            ;mov EAX, EDI
+            ;call iprintLF
+
+            ;add EDI, 30
+
+            dec ECX
+            cmp ECX, 0
+
+            jne .cycle
+
+            mov [students_saved], EDX
+
+            jmp menu_start
 
 
 string_copy_count:
-	mov ebx, 0
-	mov ecx, 0
-	mov ebx, eax
+    mov ebx, 0
+    mov ecx, 0
+    mov ebx, eax
     pop edx
     
     .next_char:
@@ -164,23 +235,23 @@ string_copy_count:
         cmp bl, 0 ;if there's still something left
         jz .done
 
-        cmp bl, 0x0 ;if its end of word
+        cmp bl, 0xA ;if its end of line
         je .end_word
 
-        mov byte[esi+ecx], bl	; moves a char to current index
+        mov byte[esi+ecx], bl   ; moves a char to current index
 
-        inc eax			    	; next letter
-        inc ecx			    	; so it doesn't rewrite a char
+        inc eax                 ; next letter
+        inc ecx                 ; so it doesn't rewrite a char
         jmp .next_char
 
     .end_word:
         add esi, 30
 
-        inc eax				; next letter
-        inc ecx				; so it doesn't rewrite a char
+        inc eax             ; next letter
+        inc ecx             ; so it doesn't rewrite a char
         jmp .next_char
         
-    .done:				;restore values
+    .done:              ;restore values
         push edx
         ret
 
