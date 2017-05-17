@@ -8,7 +8,9 @@ sys_read EQU 3
 sys_write EQU 4
 sys_open equ 5
 sys_close equ 6
+sys_sync equ 36
 O_RDONLY equ 0
+sys_create equ 8
 O_RDWR equ 1
 stdin EQU 0
 stdout EQU 1
@@ -206,36 +208,28 @@ stringcopy:
 
 ;Same as sringcopy functino but uses condition to compare agains '0xA' or return key.
 copystring:
-	push ecx										 ;save and clear registers
-	push ebx
-	mov ebx, 0
-	mov ecx, 0
-	mov ebx, eax
+    push ecx    ;salvamos ecx en stack
+    push ebx 
+    mov ebx, 0
+    mov ecx, 0
+    mov ebx, eax
+.sigcar:
+    mov BL, byte[Eax]
+    cmp bl, 0xA
+    je .salto
+    mov byte[esi+ecx], bl   ;movemos un caracter
+    cmp byte[eax],0 ;comparamos el byte que es a ver si es 0
+    jz .finalizar   ; jump if zero a finalizado
+    
+.salto:
+    inc eax
+    inc ecx
+    jmp .sigcar
 
-	.sigcar:
-        mov bl, byte[eax]
-
-        cmp bl, 0xA                                  ;if there's a return character, continue to next iteration
-        je .continue
-		
-		mov byte[esi+ecx], bl						 ;move one character
-
-		cmp byte[eax],0								 ;check if byte is 0
-		jz .finalized 								 ;jump if zero to finalized
-
-		inc eax										 ;next letter
-		inc ecx 									 ;avoid rewriting a char in index
-		jmp .sigcar
-
-        .continue:
-            inc eax
-            inc ecx
-            jmp .sigcar
-
-	.finalized:
-		pop ebx 									 ;restore values
-		pop ecx
-		ret
+.finalizar:
+    pop ebx
+    pop ecx
+    ret
 
 ;==========================
 ; Reads input.
