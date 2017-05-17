@@ -13,18 +13,23 @@ segment .data
     menu_2 DB "Waiting for number input...",0xA,0x0
     menu_3 DB "All Students...",0xA,0x0
     menu_4 DB "File Saved!",0xA,0x0
-
+    dummy db "",0xa,0x0
+    dummy_space db " ",0x0
     msg_name DB "Students name: ",0x0
     msg_grade DB "Students grade: ",0x0
+    msg_empty DB "### No students saved  ###",0x0
+    msg_name_file DB "name file: ",0x0
 
 segment .bss
     students_saved resb 4 ;to keep track of 
 
     array resb 3000
     array_grades resb 3000
+    mixed_array resb 4000
+    len_mixed equ $-mixed_array
     file_buffer resb 2048
     len equ $-file_buffer
-
+    file resb 2048
     option_buffer resb 3
     option_buffer_len equ $-option_buffer
 
@@ -101,7 +106,7 @@ _start:
         je print_student_grades                                      ;jump if equal
 
         cmp eax,4                                        ;compare option to 4 (save file)
-        ;je printFile                                     ;jump if equal
+        je save_file                                     ;jump if equal
 
         cmp eax,0                                        ;compare option to 0 (Quit)
         je end                                           ;jump if equal
@@ -220,6 +225,118 @@ _start:
             mov [students_saved], EDX
 
             jmp menu_start
+
+
+    save_file:
+        mov ecx, [students_saved]
+        cmp ecx, 0 
+        je empty_array
+
+        ; getting array in registries ;
+        push esi
+        mov esi, mixed_array
+        mov ebx, array
+        mov edx, array_grades
+       
+
+        final_array:
+            mov eax, ebx ; names to eax 
+            call copystring ; saved names to esi using function
+
+            ; moving through the arrays :thinking: 
+            add esi, 30 
+            add ebx, 30 
+
+           mov eax, dummy_space
+           call copystring
+           add esi, 1
+
+            ;mov eax, [edx] ; getting grades
+            ;call itoa 
+
+            
+
+            ;add esi, 3 
+            ;add edx, 3 
+
+            ;mov eax, 0xa 
+            ;call stringcopy
+            ;add esi, 1 
+
+            mov eax, dummy 
+            call stringcopy
+            add esi, 1 
+
+            dec ecx
+            cmp ecx,0 
+
+            jne final_array
+
+        mov eax, msg_name_file
+        call sprint
+        mov ecx, file_buffer
+        mov edx, len
+        call readText
+        mov esi, file
+        mov eax, file_buffer
+        call copystring 
+
+        mov eax, sys_create
+        mov ebx, file
+        mov ecx, 511 
+        int 0x80
+
+        cmp eax,0
+        jle error
+
+        ; open file ;
+
+        mov eax, sys_open
+        mov ebx, file
+        mov ecx, O_RDWR
+        int 0x80
+        cmp eax, 0 
+        jle error
+
+        ; :writing: ;
+
+        mov eax, ebx
+        mov eax, sys_write
+        mov ecx, mixed_array
+        mov edx, len_mixed
+        int 0x80
+        mov eax, sys_sync
+        int 0x80
+
+        ; closing file ;
+
+        mov eax, sys_close
+        int 0x80
+        pop esi
+        jmp menu_start
+
+
+
+
+    
+
+
+
+
+
+
+
+    empty_array:
+        mov eax, msg_empty
+        call sprintLF
+        jmp menu_start
+
+
+
+
+
+
+
 
 
 string_copy_count:
