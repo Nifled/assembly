@@ -7,7 +7,7 @@
 
 segment .data
     msg_file_not_found db "File not found...",0x0
-    menu DB "| 1. Add Student | 2. Capture Grades | 3. Print Students | 4. Save File | 0. Quit |",0xA,0x0
+    menu DB "| 1. Add Student | 2. Capture Grades | 3. Print Students | 4. Save File | 0. Quit |",0xA, "Option>>>>>>>",0x0
 
     menu_1 DB "Students name?",0xA,0x0
     menu_2 DB "Waiting for number input...",0xA,0x0
@@ -15,9 +15,10 @@ segment .data
     menu_4 DB "File Saved!",0xA,0x0
 
     msg_name DB "Students name: ",0x0
+    msg_grade DB "Students grade: ",0x0
 
 segment .bss
-    students_saved resb 4
+    students_saved resb 4 ;to keep track of 
 
     array resb 3000
     array_grades resb 3000
@@ -26,6 +27,9 @@ segment .bss
 
     option_buffer resb 3
     option_buffer_len equ $-option_buffer
+
+    grade_buffer resb 3
+    grade_buffer_len equ $-grade_buffer
 
     new_name_buffer resb 30
     len_name equ $-new_name_buffer
@@ -91,7 +95,7 @@ _start:
         je add_student                                      ;jump if equal
 
         cmp eax,2                                        ;compare option to 2 (capture grades)
-        ;je printFile                                     ;jump if equal
+        je capture_grades                                     ;jump if equal
 
         cmp eax,3                                        ;compare option to 3 (print students)
         ;je readFile                                      ;jump if equal
@@ -140,7 +144,43 @@ _start:
 
     ;====================== Capture Grades ===============================
     capture_grades:
-        mov esi. array
+
+        mov ecx, [students_saved] ;# of studens
+
+        mov esi, array ;student names
+        mov edx, array_grades ;student grades
+
+        cycle:
+            mov eax, esi
+            call sprintLF ;prints student name
+
+            mov eax, msg_grade
+            call sprint ;prints msg asking for grade
+
+            push ecx ;push to save registers and use later
+            push edx ; =
+
+            mov ecx, grade_buffer
+            mov edx, grade_buffer_len ;gets registers ready for input
+            call readText ;reads input
+            mov eax, grade_buffer ;moves input to eax
+            call atoi ;converts grade input to int
+
+            pop edx ;recover array_grades
+            mov [edx], eax ;mov grade to array_grades
+            add esi, 30 ;for student names
+            add edx, 4 ;for grades
+
+            ;clean up buffer
+            mov edi, grade_buffer
+            mov ecx, 30
+            xor eax, eax
+            rep stosb
+
+            pop ecx ;recover # of students
+            dec ecx ;decrement # of students
+            cmp ecx, 0
+            jg cycle
 
 
         jmp menu_start
