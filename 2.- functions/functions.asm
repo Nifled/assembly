@@ -208,28 +208,28 @@ stringcopy:
 
 ;Same as sringcopy functino but uses condition to compare agains '0xA' or return key.
 copystring:
-    push ecx    ;salvamos ecx en stack
-    push ebx 
+    push ecx    ;store ecx
+    push ebx    ;store ebx
     mov ebx, 0
     mov ecx, 0
     mov ebx, eax
-.sigcar:
-    mov BL, byte[Eax]
-    cmp bl, 0xA
-    je .salto
-    mov byte[esi+ecx], bl   ;movemos un caracter
-    cmp byte[eax],0 ;comparamos el byte que es a ver si es 0
-    jz .finalizar   ; jump if zero a finalizado
-    
-.salto:
-    inc eax
-    inc ecx
-    jmp .sigcar
+	.nextchar:
+	    mov bl, byte[Eax]
+	    cmp bl, 0xA
+	    je .continue
+	    mov byte[esi+ecx], bl   ;move 1 character
+	    cmp byte[eax],0 ;compare byte to check if 0
+	    jz .finalized   ; jump if zero to finalized
 
-.finalizar:
-    pop ebx
-    pop ecx
-    ret
+	.continue:
+	    inc eax
+	    inc ecx
+	    jmp .nextchar
+
+	.finalized:
+	    pop ebx
+	    pop ecx
+	    ret
 
 ;==========================
 ; Reads input.
