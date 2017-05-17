@@ -7,8 +7,8 @@
 
 segment .data
     msg_file_not_found db "File not found...",0x0
-    menu DB "| 1. Add Student | 2. Capture Grades | 3. Print Students | 4. Save File | 0. Quit |",0xA, "Option>>>>>>>",0x0
-
+   ;menu DB "| 1. Add Student | 2. Capture Grades | 3. Print Students | 4. Save File | 0. Quit |",0xA, "Option>>>>>>>",0x0
+    menu db "*** MENU ***",0xa, "1. Add Student",0xa, "2. Capture Grades",0xa ,"3. Print Students",0xa,"4. Save File",0xa,"0. Quit",0xa,"Option>>>>>> ",0x0
     menu_1 DB "Students name?",0xA,0x0
     menu_2 DB "Waiting for number input...",0xA,0x0
     menu_3 DB "All Students...",0xA,0x0
