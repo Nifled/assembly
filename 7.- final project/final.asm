@@ -34,6 +34,7 @@ segment .bss
     min resb 4
     avg resb 4
     stddev resb 4
+    sum_squares resb 4
 
     array resb 3000
     array_grades resb 3000
@@ -281,7 +282,8 @@ _start:
 
             mov edx, array_grades
             mov ecx, [students_saved]
-            mov ebx, 0
+            mov eax, 0
+            mov [sum_squares], eax
 
             ;sum of squares of differences (xi - x)^2
             .std_dev_loop:
@@ -290,29 +292,26 @@ _start:
                 sub eax, [avg] ;Take each value in the data set (x) and subtract the avg
                 imul eax, eax ;Square each of the differences
 
-                add ebx, eax ;counter
+                add [sum_squares], eax ;counter
 
-                add edx, 4 ;move to next index in array (next grade)
+
+                add edx, 8 ;move to next index in array (next grade)
 
                 dec ecx ;decrement # of students til 0
+                cmp ecx, 0
                 jg .std_dev_loop
 
-            ;ebx holds the sum of squares
-            mov ecx, [students_saved]
-            dec ecx ;need to divide sum by n-1
-
-            mov eax, ebx
+            ;[sum_squares] holds the sum of squares
+            mov ecx, [students_saved] ;need to divide by n-1
+            dec ecx ;subract 1 from n
+            mov edx, 0
+            mov eax, [sum_squares]
             idiv ecx ;divides sum of squares by n-1
 
-            mov edi, [eax] ;mov sum of squares divided by n-1 to edi for sqr func
-            call isqrt32
+            mov edi, eax ;mov sum of squares divided by n-1 to edi for sqr func
+            call isqrt32 ;square root
 
-            call iprintLF
-
-
-
-
-
+            call iprintLF ;print standart deviation
 
 
             jmp menu_start
