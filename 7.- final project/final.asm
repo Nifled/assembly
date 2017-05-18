@@ -19,6 +19,7 @@ segment .data
     msg_avg DB "Average: ",0x0
     msg_max DB "Highest grade: ",0x0
     msg_min DB "Lowest grade: ",0x0
+    msg_stddev DB "Standard Deviation: ",0x0
 
     msg_empty DB "### No students saved  ###",0x0
     msg_name_file DB "Name file: ",0x0
@@ -31,6 +32,8 @@ segment .bss
     summation resb 4
     max resb 4
     min resb 4
+    avg resb 4
+    stddev resb 4
 
     array resb 3000
     array_grades resb 3000
@@ -256,6 +259,7 @@ _start:
 
             idiv ECX
             call iprintLF
+            mov [avg], eax
 
             ; Printing max and min values
             mov eax, msg_max
@@ -269,6 +273,46 @@ _start:
 
             mov eax, [min]
             call iprintLF
+
+
+            ;Calculating Standard Deviation
+            mov eax, msg_stddev
+            call sprint ;prints std dev message
+
+            mov edx, array_grades
+            mov ecx, [students_saved]
+            mov ebx, 0
+
+            ;sum of squares of differences (xi - x)^2
+            .std_dev_loop:
+                mov eax, [edx] ;value of current grade to eax
+
+                sub eax, [avg] ;Take each value in the data set (x) and subtract the avg
+                imul eax, eax ;Square each of the differences
+
+                add ebx, eax ;counter
+
+                add edx, 4 ;move to next index in array (next grade)
+
+                dec ecx ;decrement # of students til 0
+                jg .std_dev_loop
+
+            ;ebx holds the sum of squares
+            mov ecx, [students_saved]
+            dec ecx ;need to divide sum by n-1
+
+            mov eax, ebx
+            idiv ecx ;divides sum of squares by n-1
+
+            mov edi, [eax] ;mov sum of squares divided by n-1 to edi for sqr func
+            call isqrt32
+
+            call iprintLF
+
+
+
+
+
 
 
             jmp menu_start
@@ -422,7 +466,22 @@ string_copy_count:
         ret
 
 
-
+;Calculate square root
+isqrt32:
+    mov ebx, edi
+    xor eax, eax
+    .while:
+        cmp eax, ebx
+        jnb .endwhile
+        add ebx, eax
+        shr ebx, 1
+        mov eax, edi
+        xor edx, edx
+        div ebx
+        jmp .while
+    .endwhile:
+        mov eax, ebx
+        ret
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; rceives integer converts it to ascii (string);;;
