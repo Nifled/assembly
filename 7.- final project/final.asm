@@ -16,6 +16,7 @@ segment .data
 
     msg_name DB "Students name: ",0x0
     msg_grade DB "Students grade: ",0x0
+    space DB " ", 0x0
 
 segment .bss
     students_saved resb 4 ;to keep track of 
@@ -28,7 +29,7 @@ segment .bss
     option_buffer resb 3
     option_buffer_len equ $-option_buffer
 
-    grade_buffer resb 3
+    grade_buffer resb 8
     grade_buffer_len equ $-grade_buffer
 
     new_name_buffer resb 30
@@ -168,7 +169,7 @@ _start:
             pop edx ;recover array_grades
             mov [edx], eax ;mov grade to array_grades
             add esi, 30 ;for student names
-            add edx, 4 ;for grades
+            add edx, 8 ;for grades
 
             ;clean up buffer
             mov edi, grade_buffer
@@ -193,10 +194,9 @@ _start:
     print_student_grades:
 
     mov ECX, [students_saved]
-    mov EDX, ECX
 
     mov ESI, array
-    mov EDI, array_grades
+    mov EDX, array_grades
 
         .cycle:
             mov EAX, ESI
@@ -204,20 +204,18 @@ _start:
 
             add ESI, 30
 
-            ;mov EAX, 0x20
-            ;call sprint
+            mov EAX, space
+            call sprint
 
-            ;mov EAX, EDI
-            ;call iprintLF
+            mov EAX, [EDX]
+            call iprintLF
 
-            ;add EDI, 30
+            add EDI, 30
 
             dec ECX
             cmp ECX, 0
 
             jne .cycle
-
-            mov [students_saved], EDX
 
             jmp menu_start
 
