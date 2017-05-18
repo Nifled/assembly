@@ -1,19 +1,24 @@
 ;final.asm
-;prints three strings, using functions for repeated tasks
 ;author: Erick Delfin, Gilberto Ayala, German Verdugo
-;date: 2017/05/11
-; Ejemplo de como se usa
+;date: 2017/05/18
+; Ejemplo de como se usa:
+
 ; Se muestra un menu con las opciones requeridas del proyecto,
-; al seleccionar la opcion 1 te pide el nombre y se guarda la 
-; opcion 2 te pide la calificacion de los alumnos guardados en
+; al seleccionar la opcion 1 te pide el nombre y se guarda.
+
+; La opcion 2 te pide la calificacion de los alumnos guardados en
 ; en caso de volver a seleccionar esta opcion de nuevo despues
 ; de ya tener guardadas calificaciones se sobrescribiran con 
-; las nuevas que se introduzcan la opcion, la opcion 3 muestran 
-; las calificaciones, minimo, maximo, promedio y desviacion estandar
-; la opcion 4 te muestra el mensaje que te pide nombre para el archivo
+; las nuevas que se introduzcan la opcion.
+
+; La opcion 3 muestran las calificaciones, minimo, maximo, promedio y desviacion estandar.
+; La formula que se utilizo para la desviacion estandar es sqrt(E(xi-x) / n-1)
+
+; La opcion 4 te muestra el mensaje que te pide nombre para el archivo
 ; a guardar y para leer dicho archivo usar el comando 
 ; "$ cat <nombre del archivo>" despliega las calificaciones guardadas
-; la opcion 0 es para salir.
+
+; La opcion 0 es para salir.
 
 %include '../2.- functions/functions.asm'
 
@@ -252,7 +257,7 @@ _start:
                 cmp eax, [max]
                 jg .new_max
 
-                cmp eax, [min]
+                cmp eax, [min]  
                 jl .new_min
 
 
