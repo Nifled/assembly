@@ -26,7 +26,7 @@ segment .data
 
 segment .bss
     students_saved resb 4 ;to keep track of # of students that saved
-
+    summation resb 4
     array resb 3000
     array_grades resb 3000
     mixed_array resb 4000
@@ -205,7 +205,8 @@ _start:
 
     mov ESI, array
     mov EDX, array_grades
-    mov EBX, 0                  ; Average
+    mov eax, 0
+    mov [summation], eax                  ; for average
 
         .cycle:
             mov EAX, ESI
@@ -217,7 +218,7 @@ _start:
             call sprint
 
             mov EAX, [EDX]
-            add EBX, EAX
+            add [summation], EAX
             call iprintLF
 
             add EDX, 8
@@ -230,7 +231,7 @@ _start:
             mov EAX, msg_avg
             call sprint
 
-            mov EAX, EBX
+            mov EAX, [summation]
             mov EDX, 0
             mov ECX, [students_saved]
 
