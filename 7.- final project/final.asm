@@ -2,6 +2,18 @@
 ;prints three strings, using functions for repeated tasks
 ;author: Erick Delfin, Gilberto Ayala, German Verdugo
 ;date: 2017/05/11
+; Ejemplo de como se usa
+; Se muestra un menu con las opciones requeridas del proyecto,
+; al seleccionar la opcion 1 te pide el nombre y se guarda la 
+; opcion 2 te pide la calificacion de los alumnos guardados en
+; en caso de volver a seleccionar esta opcion de nuevo despues
+; de ya tener guardadas calificaciones se sobrescribiran con 
+; las nuevas que se introduzcan la opcion, la opcion 3 muestran 
+; las calificaciones, minimo, maximo, promedio y desviacion estandar
+; la opcion 4 te muestra el mensaje que te pide nombre para el archivo
+; a guardar y para leer dicho archivo usar el comando 
+; "$ cat <nombre del archivo>" despliega las calificaciones guardadas
+; la opcion 0 es para salir.
 
 %include '../2.- functions/functions.asm'
 
@@ -20,7 +32,7 @@ segment .data
     msg_max DB "Highest grade: ",0x0
     msg_min DB "Lowest grade: ",0x0
     msg_stddev DB "Standard Deviation: ",0x0
-
+    msg_no_valid DB "### Grade not valid ###", 0x0
     msg_empty DB "### No students saved  ###",0x0
     msg_name_file DB "Name file: ",0x0
 
@@ -163,7 +175,8 @@ _start:
     ;====================== Capture Grades ===============================
     capture_grades:
         mov ecx, [students_saved] ;# of studens
-
+        cmp ecx, 0
+        je empty_array
         mov esi, array ;student names
         mov edx, array_grades ;student grades
 
@@ -181,8 +194,11 @@ _start:
             mov edx, grade_buffer_len ;gets registers ready for input
             call readText ;reads input
             mov eax, grade_buffer ;moves input to eax
+            
+            
             call atoi ;converts grade input to int
-
+            cmp eax, 101
+            jge not_valid
             pop edx ;recover array_grades
             mov [edx], eax ;mov grade to array_grades
             add esi, 30 ;for student names
@@ -427,7 +443,10 @@ empty_array:
 
 
 
-
+not_valid:
+    mov eax, msg_no_valid
+    call sprintLF
+    jmp capture_grades
 
 
 
