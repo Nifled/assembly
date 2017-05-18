@@ -113,8 +113,6 @@ _start:
 
 ;==================== MENU ==========================
     menu_start:
-        mov eax, [students_saved]
-        call iprintLF       ; imprimir cantidad de nombres actuales (temporal)
 
         mov eax, menu
         call sprint                                      ;displays menu
@@ -147,8 +145,6 @@ _start:
         jge menu_start
 
 
-
-
     ;====================== Add Student ===============================
     add_student:
         mov eax, msg_name
@@ -159,7 +155,6 @@ _start:
         mov edx, len_name
         call readText                                    ;waits for name input
         mov eax, new_name_buffer                             ;saves new_name_buffer to memory in eax
-
 
         call stringcopy         
         add esi, 30 ;copies name and moves pointer    
@@ -222,10 +217,6 @@ _start:
 
 
         jmp menu_start
-
-
-
-    jmp end
 
     ;====================== Print students and grades =====================
 
@@ -387,8 +378,7 @@ _start:
         jne mixed
 
 
-    ; :saving: ;
-
+    ; File Write and save
     mov eax, msg_name_file
     call sprint                 
     mov ecx, file_buffer        
@@ -398,7 +388,7 @@ _start:
     mov eax, file_buffer        
     call copystring             
 
-    ; Creating file ;
+    ; Creating file
     mov eax, sys_create        
     mov ebx, file               
     mov ecx, 511                
@@ -416,7 +406,7 @@ _start:
     cmp eax,0
     jle error                   
 
-    ; Writing :
+    ; Writing
     mov ebx, eax 
 
 
@@ -506,9 +496,7 @@ isqrt32:
         mov eax, ebx
         ret
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; rceives integer converts it to ascii (string);;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Receives integer converts it to ascii (string)
 itoa:
     push ebx        ; save registers to the stack
     push ecx
