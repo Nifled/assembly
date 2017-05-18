@@ -17,6 +17,8 @@ segment .data
     msg_name DB "Students name: ",0x0
     msg_grade DB "Students grade: ",0x0
     msg_avg DB "Average: ",0x0
+    msg_max DB "Highest grade: ",0x0
+    msg_min DB "Lowest grade: ",0x0
 
     msg_empty DB "### No students saved  ###",0x0
     msg_name_file DB "Name file: ",0x0
@@ -27,6 +29,9 @@ segment .data
 segment .bss
     students_saved resb 4 ;to keep track of # of students that saved
     summation resb 4
+    max resb 4
+    min resb 4
+
     array resb 3000
     array_grades resb 3000
     mixed_array resb 4000
@@ -205,8 +210,11 @@ _start:
 
     mov ESI, array
     mov EDX, array_grades
+
     mov eax, 0
-    mov [summation], eax                  ; for average
+    mov [summation], eax ;initialize summation, max, and min with 0
+    mov [max], eax
+    mov [min], edx
 
         .cycle:
             mov EAX, ESI
@@ -218,7 +226,17 @@ _start:
             call sprint
 
             mov EAX, [EDX]
-            add [summation], EAX
+
+            ;compare eax with current max and min values to change if needed
+            .max_min:
+                cmp eax, [max]
+                jg .new_max
+
+                cmp eax, [min]
+                jl .new_min
+
+
+            add [summation], EAX  ;adds current grade to summation
             call iprintLF
 
             add EDX, 8
@@ -228,6 +246,7 @@ _start:
 
             jne .cycle
 
+            ; Printing average
             mov EAX, msg_avg
             call sprint
 
@@ -238,9 +257,32 @@ _start:
             idiv ECX
             call iprintLF
 
+            ; Printing max and min values
+            mov eax, msg_max
+            call sprint
+
+            mov eax, [max]
+            call iprintLF
+
+            mov eax, msg_min
+            call sprint
+
+            mov eax, [min]
+            call iprintLF
+
+
             jmp menu_start
 
 
+        .new_max: ;moves eax to max value
+            mov [max], eax
+            jmp .max_min
+        .new_min: ;moves eax no min value
+            mov [min], eax
+            jmp .max_min
+
+
+    ;====================== Write and save fiel with names and grades =====================
     save_file:
   
     mov ecx, [students_saved]
