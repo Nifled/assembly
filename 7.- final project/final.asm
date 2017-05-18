@@ -7,7 +7,6 @@
 
 segment .data
     msg_file_not_found db "File not found...",0x0
-   ;menu DB "| 1. Add Student | 2. Capture Grades | 3. Print Students | 4. Save File | 0. Quit |",0xA, "Option>>>>>>>",0x0
     menu db "*** MENU ***",0xa, "1. Add Student",0xa, "2. Capture Grades",0xa ,"3. Print Students",0xa,"4. Save File",0xa,"0. Quit",0xa,"Option>>>>>> ",0x0
     menu_1 DB "Students name?",0xA,0x0
     menu_2 DB "Waiting for number input...",0xA,0x0
@@ -19,13 +18,13 @@ segment .data
     msg_grade DB "Students grade: ",0x0
 
     msg_empty DB "### No students saved  ###",0x0
-    msg_name_file DB "name file: ",0x0
+    msg_name_file DB "Name file: ",0x0
 
     space DB " ", 0x0
 
 
 segment .bss
-    students_saved resb 4 ;to keep track of 
+    students_saved resb 4 ;to keep track of # of students that saved
 
     array resb 3000
     array_grades resb 3000
@@ -255,8 +254,8 @@ _start:
         ;call stringcopy
         ;add esi, 1 
         
-        add esi, 4 
-        add edx, 4
+        add esi, 8 
+        add edx, 8
         mov eax, dummy
         call stringcopy
         add esi, 1                  
@@ -310,7 +309,8 @@ _start:
     mov eax, sys_sync           
     int 0x80                    
 
-
+    mov eax, menu_4
+    call sprintLF
 
 
     ; :closing: ; 
