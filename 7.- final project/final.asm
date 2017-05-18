@@ -16,6 +16,7 @@ segment .data
     dummy_space db ",",0x0
     msg_name DB "Students name: ",0x0
     msg_grade DB "Students grade: ",0x0
+    msg_avg DB "Average: ",0x0
 
     msg_empty DB "### No students saved  ###",0x0
     msg_name_file DB "Name file: ",0x0
@@ -204,6 +205,7 @@ _start:
 
     mov ESI, array
     mov EDX, array_grades
+    mov EBX, 0                  ; Average
 
         .cycle:
             mov EAX, ESI
@@ -215,14 +217,25 @@ _start:
             call sprint
 
             mov EAX, [EDX]
+            add EBX, EAX
             call iprintLF
 
-            add EDI, 30
+            add EDX, 8
 
             dec ECX
             cmp ECX, 0
 
             jne .cycle
+
+            mov EAX, msg_avg
+            call sprint
+
+            mov EAX, EBX
+            mov EDX, 0
+            mov ECX, [students_saved]
+
+            idiv ECX
+            call iprintLF
 
             jmp menu_start
 
